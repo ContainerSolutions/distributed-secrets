@@ -23,12 +23,30 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+type TargetSecretStores struct {
+	// Name of the SecretStore resource
+	Name string `json:"name"`
+
+	// Kind of the SecretStore resource (SecretStore or ClusterSecretStore)
+	// Defaults to `SecretStore`
+	// +optional
+	Kind string `json:"kind,omitempty"`
+}
+
+type SecretRef struct {
+	name string `json:"name"`
+
+	namespace string `json:"namespace"`
+}
+
 // DistributedSecretsSpec defines the desired state of DistributedSecrets
 type DistributedSecretsSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	
+	TargetSecretStores []TargetSecretStores `json:"targetSecretStores"`
+
+	SecretRef SecretRef `json:"secretRef"`
 }
 
 // DistributedSecretsStatus defines the observed state of DistributedSecrets
