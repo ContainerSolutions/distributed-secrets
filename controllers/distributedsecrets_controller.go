@@ -18,6 +18,7 @@ package controllers
 
 import (
 	"context"
+	"k8s.io/apimachinery/pkg/api/errors"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -47,10 +48,20 @@ type DistributedSecretsReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.2/pkg/reconcile
 func (r *DistributedSecretsReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	logger := log.FromContext(ctx)
 
-	// TODO(user): your logic here
+	// Initialize controller
+	distributedSecrets := &distributedsecretsv1alpha1.DistributedSecrets{}
+	err := r.Get(ctx, req.NamespacedName, distributedSecrets)
 
+	if err != nil {
+		if errors.IsNotFound(err) {
+			logger.Info("Distributed Secret not found")
+			return ctrl.Result{}, nil
+		}
+		logger.Error(err, "Failed to get Distributed Secret")
+		return ctrl.Result{}, err
+	}
 	return ctrl.Result{}, nil
 }
 
