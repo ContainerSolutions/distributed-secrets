@@ -19,6 +19,7 @@ package controllers
 import (
 	"context"
 	"k8s.io/apimachinery/pkg/api/errors"
+	"time"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -26,6 +27,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	distributedsecretsv1alpha1 "github.com/DeeAjayi/distributed-secrets/api/v1alpha1"
+	"github.com/DeeAjayi/distributed-secrets/internal/kubernetes"
 )
 
 // DistributedSecretsReconciler reconciles a DistributedSecrets object
@@ -61,6 +63,22 @@ func (r *DistributedSecretsReconciler) Reconcile(ctx context.Context, req ctrl.R
 		}
 		logger.Error(err, "Failed to get Distributed Secret")
 		return ctrl.Result{}, err
+	}
+	// Check for an existing secret, if it doesn't exist create one
+	_, err = kubernetes.FetchSecret(ctx, r.Client, distributedSecrets)
+	// Checks for errors that is not a "Not Found error", returns error and requeue
+	if err != nil && !errors.IsNotFound(err) {
+		logger.Error(err, "Couldn't get secret due to error")
+		return ctrl.Result{RequeueAfter: 10 * time.Second}, err
+	}
+	if errors.IsNotFound(err) {
+		logger.Info("Secret not found, creating one")
+		_, err := kubernetes.CreateSecret(ctx, r.Client, distributedSecrets)
+		if err != nil {
+			logger.Error(err, "Failed to create secret for DistributedSecret")
+			return ctrl.Result{RequeueAfter: 10 * time.Second}, err
+		}
+		logger.Info("Created secret for DistributedSecret")
 	}
 	return ctrl.Result{}, nil
 }

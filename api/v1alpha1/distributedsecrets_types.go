@@ -34,9 +34,11 @@ type TargetSecretStores struct {
 }
 
 type SecretRef struct {
-	name string `json:"name"`
+	Name string `json:"name"`
 
-	namespace string `json:"namespace"`
+	Namespace string `json:"namespace"`
+
+	Data map[string][]byte `json:"data,omitempty"`
 }
 
 // DistributedSecretsSpec defines the desired state of DistributedSecrets
