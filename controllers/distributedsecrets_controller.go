@@ -73,12 +73,22 @@ func (r *DistributedSecretsReconciler) Reconcile(ctx context.Context, req ctrl.R
 	}
 	if errors.IsNotFound(err) {
 		logger.Info("Secret not found, creating one")
-		_, err := kubernetes.CreateSecret(ctx, r.Client, distributedSecrets)
+		secret, err := kubernetes.CreateSecret(ctx, r.Client, distributedSecrets)
 		if err != nil {
 			logger.Error(err, "Failed to create secret for DistributedSecret")
 			return ctrl.Result{RequeueAfter: 10 * time.Second}, err
 		}
 		logger.Info("Created secret for DistributedSecret")
+		logger.Info("Setting secret owner")
+		err = ctrl.SetControllerReference(distributedSecrets, secret, r.Scheme)
+		if err != nil {
+			logger.Error(err, "Failed to set owner reference for secret")
+		}
+		err = r.Update(ctx, secret)
+		if err != nil {
+			logger.Error(err, "Couldn't update secret with owner reference")
+		}
+
 	}
 	return ctrl.Result{}, nil
 }
