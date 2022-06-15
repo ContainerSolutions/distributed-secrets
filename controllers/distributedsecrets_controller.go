@@ -55,7 +55,6 @@ func (r *DistributedSecretsReconciler) Reconcile(ctx context.Context, req ctrl.R
 	// Initialize controller
 	distributedSecrets := &distributedsecretsv1alpha1.DistributedSecrets{}
 	err := r.Get(ctx, req.NamespacedName, distributedSecrets)
-
 	if err != nil {
 		if errors.IsNotFound(err) {
 			logger.Info("Distributed Secret not found")
@@ -64,6 +63,7 @@ func (r *DistributedSecretsReconciler) Reconcile(ctx context.Context, req ctrl.R
 		logger.Error(err, "Failed to get Distributed Secret")
 		return ctrl.Result{}, err
 	}
+
 	// Check for an existing secret, if it doesn't exist create one
 	_, err = kubernetes.FetchSecret(ctx, r.Client, distributedSecrets)
 	// Checks for errors that is not a "Not Found error", returns error and requeue
@@ -88,8 +88,10 @@ func (r *DistributedSecretsReconciler) Reconcile(ctx context.Context, req ctrl.R
 		if err != nil {
 			logger.Error(err, "Couldn't update secret with owner reference")
 		}
-
 	}
+	// if secret is found use data in found secret (Not certain it is a good idea)
+	// what happens when a secret name already exist?
+	//possible solution add a suffix to secret name q(secretRef.Name won't be needed anymore)
 	return ctrl.Result{}, nil
 }
 
