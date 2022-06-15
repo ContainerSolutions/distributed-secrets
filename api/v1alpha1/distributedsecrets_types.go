@@ -46,7 +46,7 @@ type DistributedSecretsSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	TargetSecretStores []TargetSecretStores `json:"targetSecretStores"`
+	TargetSecretStores []TargetSecretStores `json:"targetSecretStores,omitempty"`
 
 	SecretRef SecretRef `json:"secretRef"`
 }
