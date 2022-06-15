@@ -36,7 +36,7 @@ type TargetSecretStores struct {
 type SecretRef struct {
 	Name string `json:"name"`
 
-	Namespace string `json:"namespace"`
+	//Namespace string `json:"namespace"`
 
 	Data map[string][]byte `json:"data,omitempty"`
 }

@@ -15,7 +15,7 @@ func FetchSecret(ctx context.Context, kubeClient client.Client, disSecret *distr
 	secret := &corev1.Secret{}
 	err := kubeClient.Get(ctx, types.NamespacedName{
 		Namespace: disSecret.Namespace,
-		Name:      disSecret.Name,
+		Name:      disSecret.Spec.SecretRef.Name,
 	}, secret)
 	return secret, err
 }
