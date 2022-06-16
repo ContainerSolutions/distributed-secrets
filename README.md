@@ -1,8 +1,11 @@
-# distributed-secrets-new
-// TODO(user): Add simple overview of use/purpose
+# Distributed-Secrets
+Distributed Secrets is a Kubernetes Operator that takes values from secrets and configmap resources and stores them in external secret management tools.
+
 
 ## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+The Operator creates secrets or config maps and also stores their values in specified external secrets which can be referenced by other operators like the External Secret Operator ([ESO](https://external-secrets.io/)).
+
+The operator makes use of two custom API resources - `DistributedSecrets` and `SecretStore`.
 
 ## Getting Started
 You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
@@ -16,11 +19,11 @@ kubectl apply -f config/samples/
 ```
 
 2. Build and push your image to the location specified by `IMG`:
-	
+
 ```sh
 make docker-build docker-push IMG=<some-registry>/distributed-secrets-new:tag
 ```
-	
+
 3. Deploy the controller to the cluster with the image specified by `IMG`:
 
 ```sh
@@ -47,8 +50,8 @@ make undeploy
 ### How it works
 This project aims to follow the Kubernetes [Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
 
-It uses [Controllers](https://kubernetes.io/docs/concepts/architecture/controller/) 
-which provides a reconcile function responsible for synchronizing resources untile the desired state is reached on the cluster 
+It uses [Controllers](https://kubernetes.io/docs/concepts/architecture/controller/)
+which provides a reconcile function responsible for synchronizing resources untile the desired state is reached on the cluster
 
 ### Test It Out
 1. Install the CRDs into the cluster:
